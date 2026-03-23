@@ -1,9 +1,21 @@
+import 'package:first_attemp/pomodoro.dart';
 import 'package:flutter/material.dart';
+import 'plan.dart';
 
-void main() => runApp(const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyNavigationPage(),
-    ));
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: MyNavigationPage(), // This MUST be the name of your class
+    );
+  }
+}
 
 // --- 1. DATA MODELS ---
 class Chapter {
@@ -32,13 +44,25 @@ class _MyNavigationPageState extends State<MyNavigationPage> {
     setState(() => myModules.add(Module(name: name)));
   }
 
+  Widget _getPage() {
+  switch (_selectedIndex) {
+    case 0:
+      return _buildModuleGrid();
+    case 1:
+      return const CalendarPage();
+    case 2:
+      return const Center(child: Text("Review Page"));
+    case 3:
+      return const PomodoroScreen(); // <--- Your timer lives here!
+    default:
+      return _buildModuleGrid();
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Academic Vault'), backgroundColor: Colors.blue[100]),
-      body: _selectedIndex == 0 
-          ? _buildModuleGrid() 
-          : Center(child: Text("Page $_selectedIndex")),
+      body: _getPage(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
@@ -49,6 +73,7 @@ class _MyNavigationPageState extends State<MyNavigationPage> {
           BottomNavigationBarItem(icon: Icon(Icons.grid_view), label: 'Modules'),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favorites'),
           BottomNavigationBarItem(icon: Icon(Icons.auto_stories), label: 'Review'),
+          BottomNavigationBarItem(icon: Icon(Icons.timer), label: 'Pomodoro'),
         ],
       ),
       floatingActionButton: FloatingActionButton(
